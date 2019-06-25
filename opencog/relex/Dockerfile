@@ -26,8 +26,6 @@ FROM ubuntu:16.04
 # https://stackoverflow.com/questions/25019183/docker-java7-install-fail
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
-
 RUN apt-get update ; apt-get -y upgrade ; apt-get -y autoclean
 
 RUN apt-get -y install screen telnet netcat-openbsd byobu \
