@@ -10,7 +10,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get -y upgrade
 
 # Install apt utilities
-RUN apt-get -y install apt-transport-https software-properties-common sudo
+RUN apt-get -y install apt-transport-https software-properties-common sudo \
+      wget tzdata
 
 # Install repositories and dependencies
 ARG OCPKG_URL=https://raw.githubusercontent.com/singnet/ocpkg/master/ocpkg
