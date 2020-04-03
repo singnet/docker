@@ -12,3 +12,4 @@ buildbot/workspace/volume/opencog/
 
 # For opencog/minecraft containers
 opencog/minecraft/data/
+.DS_Store

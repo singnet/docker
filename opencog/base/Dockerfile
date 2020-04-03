@@ -2,7 +2,7 @@
 #
 # docker build --no-cache -t singularitynet/opencog-deps .
 
-ARG VERSION=18.04
+ARG VERSION=20.04
 FROM ubuntu:${VERSION}
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -14,8 +14,9 @@ RUN apt-get -y install apt-transport-https software-properties-common sudo \
       wget tzdata
 
 # Install repositories and dependencies
-ARG OCPKG_URL=https://raw.githubusercontent.com/singnet/ocpkg/master/ocpkg
+ARG OCPKG_URL=https://raw.githubusercontent.com/ntoxeg/ocpkg/master/ocpkg
 ADD $OCPKG_URL /tmp/octool
+ADD https://www.abisource.com/downloads/link-grammar/5.8.0/link-grammar-5.8.0.tar.gz /tmp/
 RUN apt-get install -y tzdata
 RUN chmod 755 /tmp/octool;  sync; /tmp/octool -rdpv -l default
 
@@ -37,7 +38,7 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER opencog
 WORKDIR /home/opencog
 
-ARG INSTALL_HASKELL="yes"
+ARG INSTALL_HASKELL="no"
 RUN if [ ${INSTALL_HASKELL} = "yes" ]; then /tmp/octool -s; fi
 
 # For images built on this

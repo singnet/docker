@@ -1,7 +1,7 @@
 # For interacting with jupter notebooks. This installs a kernel for python and guile.
 
 # Build from opencog-dev:cli as it has all packages it needs.
-FROM singularitynet/opencog-dev:cli
+FROM synthillect/opencog-dev:cli
 
 RUN apt-get update --fix-missing && apt-get install -y wget bzip2 ca-certificates \
     libglib2.0-0 libxext6 libsm6 libxrender1 \
@@ -10,7 +10,7 @@ RUN apt-get update --fix-missing && apt-get install -y wget bzip2 ca-certificate
 
 # To install jupyter notebook alongside with kernel on default python3 for later usage
 # torando must be at this specific version from https://github.com/jupyter/notebook/issues/3407
-RUN python3 -m pip install jupyter ipykernel tornado==4.5.3
+RUN python3 -m pip install jupyter ipykernel tornado
 
 # Install guile-json as it is needed for guile-kernel
 WORKDIR /opt/
