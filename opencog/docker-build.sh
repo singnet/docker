@@ -20,162 +20,191 @@ CACHE_OPTION=""
 ## This file/symlinks name
 SELF_NAME=$(basename $0)
 
+# -----------------------------------------------------------------------------
+# Main Execution
+if [ $# -eq 0 ]; then NO_ARGS=true; fi
+
+while getopts "abcehjmprtu" flag; do
+    case $flag in
+    a) PULL_DEV_IMAGES=true ;;
+    b) BUILD_OPENCOG_BASE_IMAGE=true ;;
+    t) BUILD_TOOL_IMAGE=true ;;
+    e) BUILD_EMBODIMENT_IMAGE=true ;;
+    c) BUILD_COGUTIL_IMAGE=true ;;
+    m) BUILD__MOSES_IMAGE=true ;;
+    p) BUILD__POSTGRES_IMAGE=true ;;
+    r) BUILD_RELEX_IMAGE=true ;;
+    j) BUILD_JUPYTER_IMAGE=true ;;
+    u) CACHE_OPTION=--no-cache ;;
+    h) SHOW_USAGE=true ;;
+    \?)
+        SHOW_USAGE=true
+        # exit 1
+        ;;
+    *) UNKNOWN_FLAGS=true ;;
+    esac
+done
+
+shift "$(($OPTIND - 1))"
+DOCKER_NAME=$1
+if [[ -z $DOCKER_NAME ]]; then
+    DOCKER_NAME="singularitynet"
+fi
+GITHUB_NAME=$2
+if [[ -z $GITHUB_NAME ]]; then
+    GITHUB_NAME="singnet"
+fi
+
 # Functions
 usage() {
-printf "Usage: ./%s [OPTIONS]
+    printf "Usage: ./%s [OPTIONS] [DOCKER_NAME] [GITHUB_NAME]
 
   OPTIONS:
-    -a Pull all images needed for development from hub.docker.com/u/synthillect/
-    -b Build synthillect/opencog-deps image. It is the base image for
+    -a Pull all images needed for development from hub.docker.com/u/${DOCKER_NAME}/
+    -b Build ${DOCKER_NAME}/opencog-deps image. It is the base image for
        tools, cogutil, cogserver, and the buildbot images.
-    -c Builds synthillect/cogutil image. It will build synthillect/opencog-deps
+    -c Builds ${DOCKER_NAME}/cogutil image. It will build ${DOCKER_NAME}/opencog-deps
        if it hasn't been built, as it forms its base image.
-    -e Builds synthillect/minecraft image. It will build all needed images if they
+    -e Builds ${DOCKER_NAME}/inecraft image. It will build all needed images if they
        haven't already been built.
-    -j Builds synthillect/jupyter image. It will add jupyter notebook to
-    synthillect/opencog-dev:cli
-    -m Builds synthillect/moses image.
-    -p Builds synthillect/postgres image.
-    -r Builds synthillect/relex image.
-    -t Builds synthillect/opencog-dev:cli image. It will build
-    synthillect/opencog-deps
-       and synthillect/cogutil if they haven't been built, as they form its base
+    -j Builds ${DOCKER_NAME}/opencog-jupyter image. It will add jupyter notebook to
+    ${DOCKER_NAME}/opencog-dev:cli
+    -m Builds ${DOCKER_NAME}/moses image.
+    -p Builds ${DOCKER_NAME}/postgres image.
+    -r Builds ${DOCKER_NAME}/relex image.
+    -t Builds ${DOCKER_NAME}/opencog-dev:cli image. It will build
+    ${DOCKER_NAME}/opencog-deps
+       and ${DOCKER_NAME}/cogutil if they haven't been built, as they form its base
        images.
     -u This option signals all image builds to not use cache.
-    -h This help message. \n" "$SELF_NAME"
+    -h This help message.
+  
+  DOCKER_NAME: The name of the Docker user account to be used for this build (default 'singularitynet').
+  GITHUB_NAME: The name of the GitHub user account to be used for this build (default 'singnet') \n" "$SELF_NAME"
 }
 
 # -----------------------------------------------------------------------------
-## Build synthillect/opencog-deps image.
+## Build ${DOCKER_NAME}/opencog-deps image.
 build_opencog_deps() {
-    echo "---- Starting build of synthillect/opencog-deps ----"
+    echo "---- Starting build of ${DOCKER_NAME}/opencog-deps ----"
     OCPKG_OPTION=""
     if [ ! -z "$OCPKG_URL" ]; then
         OCPKG_OPTION="--build-arg OCPKG_URL=$OCPKG_URL"
     fi
-    docker build $CACHE_OPTION $OCPKG_OPTION -t synthillect/opencog-deps base
-    echo "---- Finished build of synthillect/opencog-deps ----"
+    GITHUB_OPTION="--build-arg GITHUB_NAME=$GITHUB_NAME"
+    docker build $CACHE_OPTION $OCPKG_OPTION $GITHUB_OPTION -t ${DOCKER_NAME}/opencog-deps base
+    echo "---- Finished build of ${DOCKER_NAME}/opencog-deps ----"
 }
 
-## If the synthillect/opencog-deps image hasn't been built yet then build it.
+## If the ${DOCKER_NAME}/opencog-deps image hasn't been built yet then build it.
 check_opencog_deps() {
-    if [ -z "$(docker images synthillect/opencog-deps | grep -i opencog-deps)" ]
-    then build_opencog_deps
+    if [ -z "$(docker images ${DOCKER_NAME}/opencog-deps | grep -i opencog-deps)" ]; then
+        build_opencog_deps
     fi
 }
 
 # -----------------------------------------------------------------------------
-## Build synthillect/cogutil image.
+## Build ${DOCKER_NAME}/cogutil image.
 build_cogutil() {
     check_opencog_deps
-    echo "---- Starting build of synthillect/cogutil ----"
-    docker build $CACHE_OPTION -t synthillect/cogutil cogutil
-    echo "---- Finished build of synthillect/cogutil ----"
+    echo "---- Starting build of ${DOCKER_NAME}/cogutil ----"
+    OCPKG_OPTION=""
+    if [ ! -z "$OCPKG_URL" ]; then
+        OCPKG_OPTION="--build-arg OCPKG_URL=$OCPKG_URL"
+    fi
+    GITHUB_OPTION="--build-arg GITHUB_NAME=$GITHUB_NAME"
+    docker build $CACHE_OPTION $OCPKG_OPTION $GITHUB_OPTION -t ${DOCKER_NAME}/cogutil cogutil
+    echo "---- Finished build of ${DOCKER_NAME}/cogutil ----"
 
 }
 
-## If the synthillect/cogutil image hasn't been built yet then build it.
+## If the ${DOCKER_NAME}/cogutil image hasn't been built yet then build it.
 check_cogutil() {
-    if [ -z "$(docker images synthillect/cogutil | grep -i cogutil)" ]
-    then build_cogutil
+    if [ -z "$(docker images ${DOCKER_NAME}/cogutil | grep -i cogutil)" ]; then
+        build_cogutil
     fi
 }
 
 # -----------------------------------------------------------------------------
-## Build synthillect/opencog-dev:cli image.
+## Build ${DOCKER_NAME}/opencog-dev:cli image.
 build_dev_cli() {
     check_cogutil
-    echo "---- Starting build of synthillect/opencog-dev:cli ----"
-    docker build $CACHE_OPTION -t synthillect/opencog-dev:cli tools/cli
-    echo "---- Finished build of synthillect/opencog-dev:cli ----"
+    echo "---- Starting build of ${DOCKER_NAME}/opencog-dev:cli ----"
+    GITHUB_OPTION="--build-arg GITHUB_NAME=$GITHUB_NAME"
+    docker build $CACHE_OPTION $GITHUB_OPTION -t ${DOCKER_NAME}/opencog-dev:cli tools/cli
+    echo "---- Finished build of ${DOCKER_NAME}/opencog-dev:cli ----"
 }
 
-## If the synthillect/opencog-dev:cli image hasn't been built yet then build it.
+## If the ${DOCKER_NAME}/opencog-dev:cli image hasn't been built yet then build it.
 check_dev_cli() {
-    if [ -z "$(docker images synthillect/opencog-dev:cli | grep -i opencog-dev)" ]
-    then build_dev_cli
+    if [ -z "$(docker images ${DOCKER_NAME}/opencog-dev:cli | grep -i opencog-dev)" ]; then
+        build_dev_cli
     fi
 }
 
 # -----------------------------------------------------------------------------
 ## Pull all images needed for development from hub.docker.com/u/opencog/
 pull_dev_images() {
-  echo "---- Starting pull of opencog development images ----"
-  docker pull synthillect/opencog-deps
-  docker pull synthillect/cogutil
-  docker pull synthillect/opencog-dev:cli
-  docker pull synthillect/postgres
-  docker pull synthillect/relex
-  echo "---- Finished pull of opencog development images ----"
+    echo "---- Starting pull of opencog development images ----"
+    docker pull ${DOCKER_NAME}/opencog-deps
+    docker pull ${DOCKER_NAME}/cogutil
+    docker pull ${DOCKER_NAME}/opencog-dev:cli
+    docker pull ${DOCKER_NAME}/postgres
+    docker pull ${DOCKER_NAME}/relex
+    echo "---- Finished pull of opencog development images ----"
 }
 
 # -----------------------------------------------------------------------------
-# Main Execution
-if [ $# -eq 0 ] ; then NO_ARGS=true ; fi
-
-while getopts "abcehjmprtu" flag ; do
-    case $flag in
-        a) PULL_DEV_IMAGES=true ;;
-        b) BUILD_OPENCOG_BASE_IMAGE=true ;;
-        t) BUILD_TOOL_IMAGE=true ;;
-        e) BUILD_EMBODIMENT_IMAGE=true ;;
-        c) BUILD_COGUTIL_IMAGE=true ;;
-        m) BUILD__MOSES_IMAGE=true ;;
-        p) BUILD__POSTGRES_IMAGE=true ;;
-        r) BUILD_RELEX_IMAGE=true ;;
-        j) BUILD_JUPYTER_IMAGE=true ;;
-        u) CACHE_OPTION=--no-cache ;;
-        h) usage ;;
-        \?) usage; exit 1 ;;
-        *)  UNKNOWN_FLAGS=true ;;
-    esac
-done
-
 # NOTE: To avoid repetion of builds don't reorder the sequence here.
 
-if [ $PULL_DEV_IMAGES ] ; then
+if [ $SHOW_USAGE ]; then
+    usage
+    exit 0
+fi
+
+if [ $PULL_DEV_IMAGES ]; then
     pull_dev_images
     exit 0
 fi
 
-if [ $BUILD_OPENCOG_BASE_IMAGE ] ; then
+if [ $BUILD_OPENCOG_BASE_IMAGE ]; then
     build_opencog_deps
 fi
 
-if [ $BUILD_COGUTIL_IMAGE ] ; then
+if [ $BUILD_COGUTIL_IMAGE ]; then
     build_cogutil
 fi
 
-if [ $BUILD_TOOL_IMAGE ] ; then
+if [ $BUILD_TOOL_IMAGE ]; then
     build_dev_cli
 fi
 
-if [ $BUILD_EMBODIMENT_IMAGE ] ; then
+if [ $BUILD_EMBODIMENT_IMAGE ]; then
     check_dev_cli
-    echo "---- Starting build of synthillect/minecraft ----"
-    docker build $CACHE_OPTION -t synthillect/minecraft:0.1.0 minecraft
-    echo "---- Finished build of synthillect/minecraft ----"
+    echo "---- Starting build of ${DOCKER_NAME}/minecraft ----"
+    docker build $CACHE_OPTION -t ${DOCKER_NAME}/minecraft:0.1.0 minecraft
+    echo "---- Finished build of ${DOCKER_NAME}/minecraft ----"
 fi
 
-if [ $BUILD__MOSES_IMAGE ] ; then
+if [ $BUILD__MOSES_IMAGE ]; then
     check_cogutil
-    echo "---- Starting build of synthillect/moses ----"
-    docker build $CACHE_OPTION -t synthillect/moses moses
-    echo "---- Finished build of synthillect/moses ----"
+    echo "---- Starting build of ${DOCKER_NAME}/moses ----"
+    docker build $CACHE_OPTION -t ${DOCKER_NAME}/moses moses
+    echo "---- Finished build of ${DOCKER_NAME}/moses ----"
 fi
 
-if [ $BUILD__POSTGRES_IMAGE ] ; then
-    echo "---- Starting build of synthillect/postgres ----"
+if [ $BUILD__POSTGRES_IMAGE ]; then
+    echo "---- Starting build of ${DOCKER_NAME}/postgres ----"
     ATOM_SQL_OPTION=""
     if [ ! -z "$ATOM_SQL_URL" ]; then
         ATOM_SQL_OPTION="--build-arg ATOM_SQL_URL=$ATOM_SQL_URL"
     fi
-    docker build $CACHE_OPTION $ATOM_SQL_OPTION -t synthillect/postgres postgres
-    echo "---- Finished build of synthillect/postgres ----"
+    docker build $CACHE_OPTION $ATOM_SQL_OPTION -t ${DOCKER_NAME}/postgres postgres
+    echo "---- Finished build of ${DOCKER_NAME}/postgres ----"
 fi
 
-if [ $BUILD_RELEX_IMAGE ] ; then
-    echo "---- Starting build of synthillect/relex ----"
+if [ $BUILD_RELEX_IMAGE ]; then
+    echo "---- Starting build of ${DOCKER_NAME}/relex ----"
     RELEX_OPTIONS=""
     if [ ! -z "$RELEX_REPO" ]; then
         RELEX_OPTIONS="--build-arg RELEX_REPO=$RELEX_REPO"
@@ -183,16 +212,19 @@ if [ $BUILD_RELEX_IMAGE ] ; then
     if [ ! -z "$RELEX_BRANCH" ]; then
         RELEX_OPTIONS="$RELEX_OPTIONS --build-arg RELEX_BRANCH=$RELEX_BRANCH"
     fi
-    docker build $CACHE_OPTION $RELEX_OPTIONS -t synthillect/relex relex
-    echo "---- Finished build of synthillect/relex ----"
+    docker build $CACHE_OPTION $RELEX_OPTIONS -t ${DOCKER_NAME}/relex relex
+    echo "---- Finished build of ${DOCKER_NAME}/relex ----"
 fi
 
 if [ $BUILD_JUPYTER_IMAGE ]; then
     check_dev_cli
-    echo "---- Starting build of synthillect/jupyter ----"
-    docker build $CACHE_OPTION -t synthillect/jupyter tools/jupyter_notebook
-    echo "---- Finished build of synthillect/jupyter ----" 
+    echo "---- Starting build of ${DOCKER_NAME}/opencog-jupyter ----"
+    docker build $CACHE_OPTION -t ${DOCKER_NAME}/opencog-jupyter tools/jupyter_notebook
+    echo "---- Finished build of ${DOCKER_NAME}/opencog-jupyter ----"
 fi
 
-if [ $UNKNOWN_FLAGS ] ; then usage; exit 1 ; fi
-if [ $NO_ARGS ] ; then usage ; fi
+if [ $UNKNOWN_FLAGS ]; then
+    usage
+    exit 1
+fi
+if [ $NO_ARGS ]; then usage; fi

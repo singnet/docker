@@ -6,8 +6,10 @@ FROM synthillect/opencog-deps
 
 # Install repositories and dependencies
 # FIXME: when octools auto-updates remove this.
-ADD https://raw.githubusercontent.com/ntoxeg/ocpkg/master/ocpkg \
-    /tmp/octool
+ARG OCPKG_URL=https://raw.githubusercontent.com/singnet/ocpkg/master/ocpkg
+ADD ${OCPKG_URL} /tmp/octool
+ARG GITHUB_NAME="singnet"
+ENV GITHUB_NAME ${GITHUB_NAME}
 RUN chmod 755 /tmp/octool
 
 # Install cogutil
