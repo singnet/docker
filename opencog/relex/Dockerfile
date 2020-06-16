@@ -95,6 +95,8 @@ RUN rm -rf * link-grammar*
 # Relex -- changes often
 ARG RELEX_REPO=https://github.com/singnet/relex.git
 ARG RELEX_BRANCH=master
+RUN echo RELEX_REPO=$RELEX_REPO
+RUN echo RELEX_BRANCH=$RELEX_BRANCH
 RUN git clone --depth=1 -b $RELEX_BRANCH $RELEX_REPO relex
 RUN cd relex; mvn install
 

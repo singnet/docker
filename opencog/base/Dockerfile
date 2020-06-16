@@ -15,6 +15,7 @@ RUN apt-get -y install apt-transport-https software-properties-common sudo \
 
 # Install repositories and dependencies
 ARG OCPKG_URL=https://raw.githubusercontent.com/singnet/ocpkg/master/ocpkg
+RUN echo OCPKG_URL=$OCPKG_URL
 ADD $OCPKG_URL /tmp/octool
 RUN apt-get install -y tzdata
 RUN chmod 755 /tmp/octool;  sync; /tmp/octool -rdpv -l default
