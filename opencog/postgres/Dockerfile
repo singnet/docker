@@ -6,6 +6,7 @@ FROM postgres:9.5
 ENV POSTGRES_PASSWORD="cheese"
 
 ARG ATOM_SQL_URL=https://raw.githubusercontent.com/singnet/atomspace/master/opencog/persist/sql/multi-driver/atom.sql
+RUN echo ATOM_SQL_URL=$ATOM_SQL_URL
 ADD $ATOM_SQL_URL /tmp/atom.sql
 
 COPY configure.sh /docker-entrypoint-initdb.d/
