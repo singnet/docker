@@ -29,7 +29,7 @@ your os, regardles of which project you are working on.
     * For opencog-to-minecraft use `-bcte` option
     * If you want to update your images add `-u` option. For example for opencog
       development use `-ctu` options. Unless there are some system dependency
-      changes, you don't have to update `singularitynet/opencog-deps` image.
+      changes, you don't have to update `singnet/opencog-deps` image.
     * To list the available options use `-h`
 -->
 
@@ -62,7 +62,7 @@ your os, regardles of which project you are working on.
     * For NLP related work add `-r` option
     * If you want to update your images add `-u` option. For example for opencog
       development use `-ctu` options. __Unless there are some system dependency
-      changes, you don't have to update `singularitynet/opencog-deps` image.__
+      changes, you don't have to update `singnet/opencog-deps` image.__
     * To list the available options use `-h`
 -->
 
@@ -200,7 +200,7 @@ __WIP and only for use with systems with gpus, for now__
    [here](https://github.com/NVIDIA/nvidia-docker/wiki/Installation).
 
 2. Build openog/perception image by running
-   `docker build -t singularitynet/perception perception/` from this directory.
+   `docker build -t singnet/perception perception/` from this directory.
 
 3. For usage of the built image see
    [here](https://github.com/NVIDIA/nvidia-docker/wiki/nvidia-docker).

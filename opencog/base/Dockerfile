@@ -1,6 +1,6 @@
 # For creating images with all the dependencies for development installed.
 #
-# docker build --no-cache -t singularitynet/opencog-deps .
+# docker build --no-cache -t singnet/opencog-deps .
 
 ARG VERSION=18.04
 FROM ubuntu:${VERSION}

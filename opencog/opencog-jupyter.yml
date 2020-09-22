@@ -3,7 +3,7 @@
 version: '3'
 services:
   notes:
-    image: singularitynet/jupyter:latest
+    image: singnet/jupyter:latest
     ports: 
         - "17001:17001"
         - "18001:18001"
@@ -21,7 +21,7 @@ services:
     depends_on:
         - relex
   postgres:
-    image: singularitynet/postgres
+    image: singnet/postgres
     # Uncomment the following lines if you want to work on a production
     # system.
     # NOTE: The environment variable `PROD` is set `True` then the entrypoint
@@ -30,5 +30,5 @@ services:
     #     - PROD=True
 
   relex:
-    image: singularitynet/relex
+    image: singnet/relex
     command: /bin/sh -c "./opencog-server.sh"

@@ -4,7 +4,7 @@
 # docker run --name embodiment -d -p 17001:17001 -p 5000:5000 -p 16312:16312 $USER/opencog-embodiment
 # docker logs embodiment
 
-FROM singularitynet/opencog-deps
+FROM singnet/opencog-deps
 
 # Set locale
 RUN sudo locale-gen en_US en_US.UTF-8 && \

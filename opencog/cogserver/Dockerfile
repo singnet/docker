@@ -1,9 +1,9 @@
 # Step to take
-# 1. docker build --no-cache -t singularitynet/cogserver .
-# 2. docker run -p 17001:17001 -it singularitynet/cogserver
+# 1. docker build --no-cache -t singnet/cogserver .
+# 2. docker run -p 17001:17001 -it singnet/cogserver
 # 3. rlwrap telnet localhost 17001
 
-FROM singularitynet/cogutil
+FROM singnet/cogutil
 
 # Install non-system project dependencies
 RUN  /tmp/octool -al ; ccache -C

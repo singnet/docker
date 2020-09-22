@@ -1,7 +1,7 @@
 # For interacting with jupter notebooks. This installs a kernel for python and guile.
 
 # Build from opencog-dev:cli as it has all packages it needs.
-FROM singularitynet/opencog-dev:cli
+FROM singnet/opencog-dev:cli
 
 RUN apt-get update --fix-missing && apt-get install -y wget bzip2 ca-certificates \
     libglib2.0-0 libxext6 libsm6 libxrender1 \

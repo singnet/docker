@@ -1,15 +1,15 @@
 # For creating images with gui tools for development, and dependencies installed
 # Steps:
-# 1. docker build -t singularitynet/opencog-dev:qtcreator .
+# 1. docker build -t singnet/opencog-dev:qtcreator .
 # 2. docker create --name opencog -p 17001:17001 -p 5000:5000
 #       -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix/:ro -it
 #       -w /opencog
-#       -it singularitynet/opencog-dev:qtcreator
+#       -it singnet/opencog-dev:qtcreator
 # 3. docker start -i opencog
 # 4. qtcreator
 #  Check http://wiki.opencog.org/w/Using_QT_Creator on how to use qtcreator.
 
-FROM singularitynet/cogutil
+FROM singnet/cogutil
 
 # Install non-system project dependencies
 RUN  /tmp/octool -al ; ccache -C
