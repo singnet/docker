@@ -1,6 +1,6 @@
 # Step to take
-# 1. docker build --no-cache -t singularitynet/moses .
-# 2. docker run -v $PWD:/home/moses -it singularitynet/moses bash
+# 1. docker build --no-cache -t singnet/moses .
+# 2. docker run -v $PWD:/home/moses -it singnet/moses bash
 # 3. moses
 
 # Note:
@@ -12,7 +12,7 @@
 # containing some data. Instead of $PWD you could use abslute path like
 # $HOME/path/to/data/
 
-FROM singularitynet/cogutil
+FROM singnet/cogutil
 
 # Install R
 RUN apt-get -y install r-base

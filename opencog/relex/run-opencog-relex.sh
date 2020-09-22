@@ -4,6 +4,6 @@
 #
 ./stop.sh relex-opencog
 docker run --rm --name="relex-opencog" -p 4444:4444 \
-   -w /home/Downloads/relex-master singularitynet/relex /bin/sh opencog-server.sh
+   -w /home/Downloads/relex-master singnet/relex /bin/sh opencog-server.sh
 
 clear

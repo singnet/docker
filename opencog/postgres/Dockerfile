@@ -1,4 +1,4 @@
-# docker build -t singularitynet/postgres
+# docker build -t singnet/postgres
 
 FROM postgres:9.5
 

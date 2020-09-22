@@ -2,4 +2,4 @@
 #
 # Build the docker image for relex
 #
-docker build -t singularitynet/relex .
+docker build -t singnet/relex .
